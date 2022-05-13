@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,5 +10,93 @@
 }
 
 body, html {
-  background: #dadada;
+  background: #eaeaea;
+  color: #555 !important;
+  font-family: 'Roboto', sans-serif;
+  font-size: 4vw !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(83, 81, 81, 0.161);
+  border-radius: 100rem;
+  transition: all 0.5s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(83, 81, 81, 0.298);
+}
+
+
+::-webkit-scrollbar {
+  width: .25rem;
+}
+
+.container {
+  padding: 1rem;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  width: auto;
+  flex-direction: row;
+}
+
+.col {
+  display: flex;
+  width: auto;
+  flex-direction: column;
+  width: 25%;
+}
+
+.bold {
+  font-weight: bold !important;
+}
+
+.cell {
+  font-size: 8vw !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #bbb;
+  height: 25vw;
+  max-height: 16vh;
+  margin: 0.3rem;
+  box-shadow: 0 0 .6rem .05rem #999;
+  border-radius: 0.3rem;
+}
+
+.cell:hover {
+  cursor: pointer;
+  background: #afafaf;
+  box-shadow: 0 0 .6rem .05rem #898989;
+  transition: all .1s;
+}
+
+#result {
+  height: 25vw;
+  max-height: 16vh;
+  width: 41.2rem;
+  background: #ccc;
+  width: 99.5%;
+  align-self: center;
+  box-shadow: 0 0 .6rem .05rem #aaa;
+  border-radius: 0.3rem;
+  padding: 0 .3rem;
+  font-size: 7vw !important;
+  color: #555 !important;
+  resize: none;
+}
+
+#btns {
+  margin-top: .5rem;
+  width: 100%;
+}
+#calculator {
+  width: 100%;
+}
+
+#ans {
+  background: #afafaf;
+  box-shadow: 0 0 .6rem .05rem #898989;
 }
