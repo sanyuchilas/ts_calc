@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+/* Base */
 
 * {
   box-sizing: border-box;
@@ -11,9 +11,9 @@
 
 body, html {
   background: #eaeaea;
-  color: #555 !important;
-  font-family: 'Roboto', sans-serif;
-  font-size: 4vw !important;
+  color: #555;
+  font-size: 13px;
+  width: 100%;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -31,6 +31,10 @@ body, html {
   width: .25rem;
 }
 
+#root {
+  width: 100%;
+}
+
 .container {
   padding: 1rem;
   width: 100%;
@@ -40,63 +44,90 @@ body, html {
   display: flex;
   width: auto;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .col {
   display: flex;
   width: auto;
   flex-direction: column;
-  width: 25%;
 }
 
 .bold {
   font-weight: bold !important;
 }
 
-.cell {
-  font-size: 8vw !important;
+button {
+  color: #444;
+  font-size: 4.5rem;
+  padding: 0 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
   background: #bbb;
-  height: 25vw;
-  max-height: 16vh;
-  margin: 0.3rem;
+  height: auto;
   box-shadow: 0 0 .6rem .05rem #999;
   border-radius: 0.3rem;
+  text-transform: uppercase;
 }
 
-.cell:hover {
+button:hover {
   cursor: pointer;
   background: #afafaf;
   box-shadow: 0 0 .6rem .05rem #898989;
   transition: all .1s;
 }
 
+
+/* Calculator */
+
 #result {
-  height: 25vw;
-  max-height: 16vh;
-  width: 41.2rem;
+  font-size: 5rem;
+  height: 40vh;
   background: #ccc;
-  width: 99.5%;
+  width: 100%;
   align-self: center;
   box-shadow: 0 0 .6rem .05rem #aaa;
   border-radius: 0.3rem;
   padding: 0 .3rem;
-  font-size: 7vw !important;
   color: #555 !important;
   resize: none;
 }
 
 #btns {
-  margin-top: .5rem;
   width: 100%;
 }
+
+#btwn_btns {
+  width: .8rem;
+}
+
 #calculator {
   width: 100%;
 }
 
-#ans {
-  background: #afafaf;
-  box-shadow: 0 0 .6rem .05rem #898989;
+#clean {
+  margin-top: 1rem;
+  margin-right: auto;
+}
+
+#calc {
+  margin-top: 1rem;
+}
+
+
+/* Instruction */
+
+#instruction {
+  font-size: 2.5rem;
+  width: 100%;
+}
+
+ul {
+  list-style-type: none;
+  line-height: 1.5em;
+}
+
+h3 {
+  margin-top: 1rem;
 }
