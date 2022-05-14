@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculator</title>
   <link rel="stylesheet" href="./src/styles/App.css">
+  <link rel="stylesheet" href="./src/styles/adaptive.css">
 </head>
 <body>
   <div id="root">
@@ -13,34 +14,31 @@
       <div class="col" id="calculator">
         <textarea class="row" id="result" placeholder="0"></textarea>
         <div class="row" id="btns">
-          <div class="col">
-            <div class="cell">(</div>
-            <div class="cell bold">7</div>
-            <div class="cell bold">4</div>
-            <div class="cell bold">1</div>
-            <div class="cell">+/-</div>
-          </div>
-          <div class="col">
-            <div class="cell">)</div>
-            <div class="cell bold">8</div>
-            <div class="cell bold">5</div>
-            <div class="cell bold">2</div>
-            <div class="cell bold">0</div>
-          </div>
-          <div class="col">
-            <div class="cell">n!</div>
-            <div class="cell bold">9</div>
-            <div class="cell bold">6</div>
-            <div class="cell bold">3</div>
-            <div class="cell">,</div>
-          </div>
-          <div class="col">
-            <div class="cell">/</div>
-            <div class="cell">*</div>
-            <div class="cell">-</div>
-            <div class="cell">+</div>
-            <div class="cell" id="ans">=</div>
-          </div>
+            <button id="clean">filter</button>
+            <span id="btwn_btns"></span>
+            <button id="calc">calc</button>
+        </div>
+      </div>
+      <div id="instruction" class="col">
+        <div class="col" id="instr_first">
+          <h3>Математические выражения</h3>
+          <ul>
+            <li>N! - факториал числа N</li>
+            <li>loga^N - логарифм чила N по основанию a</li>
+            <li>?aN - корень a степени из числа N</li>
+            <li>N**a - число N в степени a</li>
+            <li>Ne+a = N*10**a </li>
+          </ul>
+        </div>
+        <div id="instr_second" class="col">
+          <h3>Горячие клавиши</h3>
+          <ul>
+            <li>Enter - вычислить</li>
+            <li>Ctrl + Z - на действие назад</li>
+            <li>Ctrl + Shift + Z / Ctrl + Y - на действие вперед</li>
+            <li>Space - фильтрация</li>
+            <li>Q - подсветка ошибок</li>
+          </ul>
         </div>
       </div>
     </div>
