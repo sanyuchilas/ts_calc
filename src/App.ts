@@ -19,14 +19,19 @@ const fac = (n: number): number => {
   if (Number.isInteger(n)) return n ? n * (fac(n-1)) : 1
   return NaN
 }
-const calcAllFac = (str: string): string => {
-  let newArr: (string | undefined)[] = []
 
-  if (inputString.includes('!')) {
-    let arr: string[] = inputString.split('!')
+const log = (a: number, b: number): number => {
+  return Number((Math.log(a) / Math.log(b)).toFixed(15))
+}
+
+const calcAllFac = (str: string): string => {
+  if (str.includes('!')) {
+    let newArr: (string | undefined)[] = []
+    let arr: string[] = str.split('!')
+
     newArr = arr.map((el, i) => {
       if (arr.length - 1 !== i) {
-        let facNum: number = Number(el.replace(/[\-\*\/]/g, '+').split('+').pop())
+        let facNum: number = Number(el.replace(/[\-\*\/\(]/g, '+').split('+').pop())
         return el.slice(0, -1 * (String(facNum).length)) + String(fac(facNum))
       } else {
         if (el) return el
@@ -38,20 +43,54 @@ const calcAllFac = (str: string): string => {
 
   return str
 }
+
+const calcAllBrackets = (str: string): string => {
+  if (str.includes('(') && str.includes(')')) {
+    let arr: string[] = str.split('(')
+    let newArr: (string | undefined)[] = []
+
+    newArr = arr.map(el => {
+      if (el.includes(')')) {
+        let stEl = el.split(')')
+        return String(eval(stEl[0])) + stEl[1]
+      } else {
+        return el
+      }
+    })
+
+    return newArr.join('')
+  }
+
+  return str
+}
+
+const calcAllLog = (str: string): string => {
+  if (str.includes('log')) {
+    let newArr: (string | undefined)[] = []
+
+
+    return newArr.join('')
+  }
+  
+  return str
+}
+
 const calc = () => {
   try {
     if (!Number(input.value)) previous = input.value
     inputString = input.value.replace(',', '.')
-    inputString = calcAllFac(inputString)
-    input.value = String(eval(inputString || '0')).split('.').join()
+    inputString = calcAllFac(calcAllBrackets(inputString))
+    input.value = inputString && String(eval(inputString)).split('.').join()
   } catch(e) {
     console.log('calc error')
   }
 }
+
 const clean = (str: string): string => {
   try {
-    str = str.replace(/[^0-9\-\/\*\+()\.\,\!e]/g, '')
-    .replace(/(\*[\+\-\.\,\/\!])|(\*+)/g, '*')
+    str = str.replace(/[^0-9\-\/\*\+()\.\,\!elog]/g, '')
+    .replace(/(\*[\+\-\.\,\/\!])/g, '*')
+    .replace(/(\*{3})/g, '**')
     .replace(/(\![0-9e])|(\!+)/g, '!')
     .replace(/(\+[\*\-\.\,\/\!])|(\++)/g, '+')
     .replace(/(\-[\+\*\.\,\/\!])|(\-+)/g, '-')
@@ -114,7 +153,7 @@ const onkeydownHandler = (event: KeyboardEvent)  => {
     input.value = clean(input.value)
   }
   
-  console.log(event.key)
+  // console.log(event.key)
 }
 const onkeypressHandler = (event: KeyboardEvent) => {
   if (['q', 'Q', 'й', 'Й'].includes(event.key)) {

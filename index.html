@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculator</title>
+  <title>Calculator | Калькулятор</title>
+  <link type="image/x-icon" href="./src/assets/img/favicon.ico" rel="icon">
+  <!-- CSS -->
   <link rel="stylesheet" href="./src/styles/App.css">
   <link rel="stylesheet" href="./src/styles/adaptive.css">
 </head>
@@ -19,26 +21,32 @@
             <button id="calc">calc</button>
         </div>
       </div>
-      <div id="instruction" class="col">
-        <div class="col" id="instr_first">
-          <h3>Математические выражения</h3>
-          <ul>
-            <li>N! - факториал числа N</li>
-            <li>loga^N - логарифм чила N по основанию a</li>
-            <li>?aN - корень a степени из числа N</li>
-            <li>N**a - число N в степени a</li>
-            <li>Ne+a = N*10**a </li>
-          </ul>
+      <div id="instruction" class="row">
+        <div class="row" id="math_exp">
+          <div class="col vl"></div>
+          <div class="col">
+            <h3>Математические выражения</h3>
+            <ul>
+              <li><span>N! - факториал N</span></li>
+              <li><span>log(a)(N) - логарифм N по основанию a</span></li>
+              <li><span>root(a)(N) - корень a степени из N</span></li>
+              <li><span>N**a - N в степени a</span></li>
+              <li><span>Ne+a = (N)*10**(a)</span></li>
+            </ul>
+          </div>
         </div>
-        <div id="instr_second" class="col">
-          <h3>Горячие клавиши</h3>
-          <ul>
-            <li>Enter - вычислить</li>
-            <li>Ctrl + Z - на действие назад</li>
-            <li>Ctrl + Shift + Z / Ctrl + Y - на действие вперед</li>
-            <li>Space - фильтрация</li>
-            <li>Q - подсветка ошибок</li>
-          </ul>
+        <div id="hot_keys" class="row">
+          <div class="col vl"></div>
+          <div class="col">
+            <h3>Горячие клавиши</h3>
+            <ul>
+              <li><span>Enter - вычислить</span></li>
+              <li><span>Ctrl + Z - на действие назад</span></li>
+              <li><span>Ctrl + Shift + Z / Ctrl + Y - на действие вперед</span></li>
+              <li><span>Space - фильтрация</span></li>
+              <li><span>Q - подсветка ошибок</span></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

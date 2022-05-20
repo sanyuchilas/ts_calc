@@ -14,13 +14,16 @@ const fac = (n) => {
         return n ? n * (fac(n - 1)) : 1;
     return NaN;
 };
+const log = (a, b) => {
+    return Number((Math.log(a) / Math.log(b)).toFixed(15));
+};
 const calcAllFac = (str) => {
-    let newArr = [];
-    if (inputString.includes('!')) {
-        let arr = inputString.split('!');
+    if (str.includes('!')) {
+        let newArr = [];
+        let arr = str.split('!');
         newArr = arr.map((el, i) => {
             if (arr.length - 1 !== i) {
-                let facNum = Number(el.replace(/[\-\*\/]/g, '+').split('+').pop());
+                let facNum = Number(el.replace(/[\-\*\/\(]/g, '+').split('+').pop());
                 return el.slice(0, -1 * (String(facNum).length)) + String(fac(facNum));
             }
             else {
@@ -32,13 +35,37 @@ const calcAllFac = (str) => {
     }
     return str;
 };
+const calcAllBrackets = (str) => {
+    if (str.includes('(') && str.includes(')')) {
+        let arr = str.split('(');
+        let newArr = [];
+        newArr = arr.map(el => {
+            if (el.includes(')')) {
+                let stEl = el.split(')');
+                return String(eval(stEl[0])) + stEl[1];
+            }
+            else {
+                return el;
+            }
+        });
+        return newArr.join('');
+    }
+    return str;
+};
+const calcAllLog = (str) => {
+    if (str.includes('log')) {
+        let newArr = [];
+        return newArr.join('');
+    }
+    return str;
+};
 const calc = () => {
     try {
         if (!Number(input.value))
             previous = input.value;
         inputString = input.value.replace(',', '.');
-        inputString = calcAllFac(inputString);
-        input.value = String(eval(inputString || '0')).split('.').join();
+        inputString = calcAllFac(calcAllBrackets(inputString));
+        input.value = inputString && String(eval(inputString)).split('.').join();
     }
     catch (e) {
         console.log('calc error');
@@ -46,8 +73,9 @@ const calc = () => {
 };
 const clean = (str) => {
     try {
-        str = str.replace(/[^0-9\-\/\*\+()\.\,\!e]/g, '')
-            .replace(/(\*[\+\-\.\,\/\!])|(\*+)/g, '*')
+        str = str.replace(/[^0-9\-\/\*\+()\.\,\!elog]/g, '')
+            .replace(/(\*[\+\-\.\,\/\!])/g, '*')
+            .replace(/(\*{3})/g, '**')
             .replace(/(\![0-9e])|(\!+)/g, '!')
             .replace(/(\+[\*\-\.\,\/\!])|(\++)/g, '+')
             .replace(/(\-[\+\*\.\,\/\!])|(\-+)/g, '-')
@@ -101,7 +129,7 @@ const onkeydownHandler = (event) => {
         event.preventDefault();
         input.value = clean(input.value);
     }
-    console.log(event.key);
+    // console.log(event.key)
 };
 const onkeypressHandler = (event) => {
     if (['q', 'Q', 'й', 'Й'].includes(event.key)) {
