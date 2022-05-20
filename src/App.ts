@@ -28,7 +28,7 @@ const calcAllFac = (str: string): string => {
   if (str.includes('!')) {
     let newArr: (string | undefined)[] = []
     let arr: string[] = str.split('!')
-
+    
     newArr = arr.map((el, i) => {
       if (arr.length - 1 !== i) {
         let facNum: number = Number(el.replace(/[\-\*\/\(]/g, '+').split('+').pop())
@@ -37,27 +37,28 @@ const calcAllFac = (str: string): string => {
         if (el) return el
       }
     })
-
+    console.log(newArr)
     return newArr.join('')
   }
 
   return str
 }
 
-const calcAllBrackets = (str: string): string => {
+const calcAllBracket = (str: string): string => {
   if (str.includes('(') && str.includes(')')) {
     let arr: string[] = str.split('(')
     let newArr: (string | undefined)[] = []
 
     newArr = arr.map(el => {
       if (el.includes(')')) {
-        let stEl = el.split(')')
-        return String(eval(stEl[0])) + stEl[1]
+        let spEl = el.split(')')
+        if (spEl[0].includes('!')) spEl[0] = calcAllFac(spEl[0])
+        return String(eval(spEl[0])) + spEl[1]
       } else {
         return el
       }
     })
-
+    console.log(newArr)
     return newArr.join('')
   }
 
@@ -79,8 +80,8 @@ const calc = () => {
   try {
     if (!Number(input.value)) previous = input.value
     inputString = input.value.replace(',', '.')
-    inputString = calcAllFac(calcAllBrackets(inputString))
-    input.value = inputString && String(eval(inputString)).split('.').join()
+    inputString = calcAllFac(calcAllBracket(inputString))
+    input.value = inputString && String(eval(inputString)).replace('.', ',')
   } catch(e) {
     console.log('calc error')
   }
@@ -97,6 +98,8 @@ const clean = (str: string): string => {
     .replace(/(\/[\+\-\.\,\*\!])|(\/+)/g, '/')
     .replace(/(\,[\+\-\.\*\/\!])|(\,+)/g, ',')
     .replace(/(\.[\+\-\*\,\/\!])|(\.+)/g, '.')
+    .replace(/e[^\+]/g, 'e')
+    .replace(/\([^\-0-9l\(\)]/g, '(')
 
     return str
   } catch(e) {
@@ -117,7 +120,7 @@ const cleanBtnHandler = (event: any) => {
 const inputHandler = (event: any) => {
   let value: any = event.target.value
 
-  if (['+', '/', '*', '!', '.', ','].includes(value[0])) value = value.slice(1)
+  if (['+', '/', '*', '!', '.', ',', ')', 'e'].includes(value[0])) value = value.slice(1)
 
   input.value = clean(value)
 }
@@ -173,7 +176,7 @@ const onkeypressHandler = (event: KeyboardEvent) => {
   }
 
   if (['a', 'A', 'ф', 'Ф'].includes(event.key)) {
-    event.preventDefault();1
+    event.preventDefault();
     if (input.selectionEnd > 0) input.selectionEnd -= 1
   }
 

@@ -31,23 +31,27 @@ const calcAllFac = (str) => {
                     return el;
             }
         });
+        console.log(newArr);
         return newArr.join('');
     }
     return str;
 };
-const calcAllBrackets = (str) => {
+const calcAllBracket = (str) => {
     if (str.includes('(') && str.includes(')')) {
         let arr = str.split('(');
         let newArr = [];
         newArr = arr.map(el => {
             if (el.includes(')')) {
-                let stEl = el.split(')');
-                return String(eval(stEl[0])) + stEl[1];
+                let spEl = el.split(')');
+                if (spEl[0].includes('!'))
+                    spEl[0] = calcAllFac(spEl[0]);
+                return String(eval(spEl[0])) + spEl[1];
             }
             else {
                 return el;
             }
         });
+        console.log(newArr);
         return newArr.join('');
     }
     return str;
@@ -64,8 +68,8 @@ const calc = () => {
         if (!Number(input.value))
             previous = input.value;
         inputString = input.value.replace(',', '.');
-        inputString = calcAllFac(calcAllBrackets(inputString));
-        input.value = inputString && String(eval(inputString)).split('.').join();
+        inputString = calcAllFac(calcAllBracket(inputString));
+        input.value = inputString && String(eval(inputString)).replace('.', ',');
     }
     catch (e) {
         console.log('calc error');
@@ -81,7 +85,9 @@ const clean = (str) => {
             .replace(/(\-[\+\*\.\,\/\!])|(\-+)/g, '-')
             .replace(/(\/[\+\-\.\,\*\!])|(\/+)/g, '/')
             .replace(/(\,[\+\-\.\*\/\!])|(\,+)/g, ',')
-            .replace(/(\.[\+\-\*\,\/\!])|(\.+)/g, '.');
+            .replace(/(\.[\+\-\*\,\/\!])|(\.+)/g, '.')
+            .replace(/e[^\+]/g, 'e')
+            .replace(/\([^\-0-9l\(\)]/g, '(');
         return str;
     }
     catch (e) {
@@ -98,7 +104,7 @@ const cleanBtnHandler = (event) => {
 };
 const inputHandler = (event) => {
     let value = event.target.value;
-    if (['+', '/', '*', '!', '.', ','].includes(value[0]))
+    if (['+', '/', '*', '!', '.', ',', ')', 'e'].includes(value[0]))
         value = value.slice(1);
     input.value = clean(value);
 };
@@ -149,7 +155,6 @@ const onkeypressHandler = (event) => {
     }
     if (['a', 'A', 'ф', 'Ф'].includes(event.key)) {
         event.preventDefault();
-        1;
         if (input.selectionEnd > 0)
             input.selectionEnd -= 1;
     }
