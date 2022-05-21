@@ -191,6 +191,11 @@ const onkeydownHandler = (event: KeyboardEvent)  => {
     input.value = cleanInput.str
     setCursor(cleanInput.flag, cleanInput.selectionStart, cleanInput.selectionEnd)
   }
+
+  if (['r', 'R', 'к', 'К'].includes(event.key)) {
+    strictModeInput.checked = !strictModeInput.checked
+    strictModeInputHandler(null)
+  }
   
   // console.log(event.key)
 }
@@ -227,10 +232,7 @@ const onkeypressHandler = (event: KeyboardEvent) => {
     input.selectionEnd > 5 ? input.selectionEnd -= 5 : input.selectionEnd -= input.selectionEnd
   }
 
-  if (['r', 'R', 'к', 'К'].includes(event.key)) {
-    strictModeInput.checked = !strictModeInput.checked
-    strictModeInputHandler(null)
-  }
+  // console.log(event.key)
 }
 
 const strictModeInputHandler = (event: any) => {
