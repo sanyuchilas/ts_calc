@@ -11,6 +11,10 @@ const cleanBtn = document.querySelector('#clean');
 const calcBtn = document.querySelector('#calc');
 const strictModeInput = document.querySelector('#strict_mode_input');
 //Functions
+const correct = () => {
+    if (!('ontouchstart' in window))
+        document.body.classList.add('notouch');
+};
 const setCursor = (flag, selectionStart, selectionEnd) => {
     if (flag && selectionEnd && selectionStart) {
         input.selectionEnd = selectionEnd - 1;
@@ -50,7 +54,7 @@ const calcAllBracket = (str) => {
         let substr0 = str.slice(0, first);
         let substr = str.slice(first + 1, last);
         let substr1 = str.slice(last + 2);
-        console.log(substr0 + fac(eval(substr)) + substr1);
+        // console.log(substr0 + fac(eval(substr)) + substr1)
         return calcAllBracket(substr0 + fac(eval(substr)) + substr1);
     }
     return str;
@@ -62,8 +66,16 @@ const calcAllLog = (str) => {
         let substr0 = str.slice(0, first);
         let substr = str.slice(first + 3, last);
         let substr1 = str.slice(last + 1);
+        console.log(substr1);
         if (substr1.includes('log') && substr1.includes('_'))
             substr1 = calcAllLog(substr1);
+        console.log(1);
+        if (substr0.includes('log')) {
+            let arrSubstr1 = substr1.split('_');
+            substr0 = substr0.split('log')[0];
+            substr = calcAllLog(str.slice(first, substr1.search(/[^g][^0-9]\_/) + last + 2));
+            substr1 = arrSubstr1.pop();
+        }
         let flag = substr1[0] === '(';
         let substr2 = flag ? substr1.split(')') : substr1.split(/[\+\-\/\*]|(\*\*)/);
         return calcAllLog(substr0 + log(eval(substr2[0].replace('(', '')), eval(substr)) + substr1.slice(flag ? substr2[0].length + 1 : substr2[0].length));
@@ -205,3 +217,5 @@ input.addEventListener('input', inputHandler);
 document.body.onkeydown = onkeydownHandler;
 input.onkeypress = onkeypressHandler;
 strictModeInput.addEventListener('click', strictModeInputHandler);
+//Code
+correct();
