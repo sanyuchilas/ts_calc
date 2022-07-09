@@ -24,6 +24,44 @@ const strictModeInput: any = document.querySelector('#strict_mode_input')
 
 //Functions
 
+const findAppropriateBracketIndex = (substr: string, bracketIndex: number = -1): number => {
+  let chars = substr.split('')
+  let len = chars.length
+  let stack = []
+  let open = '('
+  let close = ')'
+
+  if (bracketIndex === -1) {
+    for (let i = len - 1; i !== -1; i--) {
+      if (close === chars[i]) {
+        stack.push(close)
+        continue
+      }
+  
+      if (open === chars[i] && stack.pop() !== close) {
+        return -1
+      }
+  
+      if (stack.length === 0) return i
+    }
+  } else if (substr[0] === open) {
+    for (let i = 0; i < len; i++) {
+      if (open === chars[i]) {
+        stack.push(open)
+        continue
+      }
+  
+      if (close === chars[i] && stack.pop() !== open) {
+        return -1
+      }
+  
+      if (stack.length === 0) return i + bracketIndex
+    }
+  } 
+
+  return -1
+}
+
 const correct = () => {
   if (!('ontouchstart' in window)) document.body.classList.add('notouch')
 }
@@ -46,58 +84,32 @@ const log = (a: number, b: number): number => {
 
 const calcAllFac = (str: string): string => {
   if (str.includes('!')) {
-    let newArr: (string | undefined)[] = []
-    let arr: string[] = str.split('!')
-    
-    newArr = arr.map((el, i) => {
-      if (arr.length - 1 !== i) {
-        let facNum: number = Number(el.replace(/[\-\*\/\(\_log]/g, '+').split('+').pop())
-        return el.slice(0, -1 * (String(facNum).length)) + String(fac(facNum))
-      } else {
-        if (el) return el
-      }
-    })
+    let first: number = str.indexOf('!')
 
-    return newArr.join('')
+    if (str[first - 1] === ')') {
+
+      let bracketIndex = findAppropriateBracketIndex(str.slice(0, first))
+      let substr0 = str.slice(0, bracketIndex)
+      let substr = str.slice(bracketIndex, first)
+      let substr1 = str.slice(first + 1)
+
+      return calcAllFac(substr0 + fac(eval(substr)) + substr1)
+    } else {
+      
+      let substr = str.slice(0, first).split(/[\+\-\*\/\(]|(log)/).pop()
+      let substr0 = str.slice(0, first - substr.length)
+      let substr1 = str.slice(first + 1)
+      
+      return calcAllFac(substr0 + fac(+substr) + substr1)
+    }
   }
-  return str
-}
 
-const calcAllBracket = (str: string): string => {
-  if (str.includes('(') && str.includes(')!')) {
-    let last = str.indexOf(')!')
-    let first = str.slice(0, last).lastIndexOf('(')
-
-    let substr0 = str.slice(0, first)
-    let substr = str.slice(first + 1, last)
-    let substr1 = str.slice(last + 2)
-    // console.log(substr0 + fac(eval(substr)) + substr1)
-    return calcAllBracket(substr0 + fac(eval(substr)) + substr1)
-  }
   return str
 }
 
 const calcAllLog = (str: string): string => {
   if (str.includes('log') && str.includes('_')) {
-    let last = str.indexOf('_')
-    let first = str.slice(0, last).lastIndexOf('log')
-
-    let substr0 = str.slice(0, first)
-    let substr = str.slice(first + 3, last)
-    let substr1 = str.slice(last + 1)
-    console.log(substr1)
-    if (substr1.includes('log') && substr1.includes('_')) substr1 = calcAllLog(substr1)
-    console.log(1)
-    if (substr0.includes('log')) {
-      let arrSubstr1 = substr1.split('_')
-      substr0 = substr0.split('log')[0]
-      substr = calcAllLog(str.slice(first, substr1.search(/[^g][^0-9]\_/) + last + 2))
-      substr1 = arrSubstr1.pop()
-    }
-    let flag = substr1[0] === '('
-    let substr2 = flag ? substr1.split(')') : substr1.split(/[\+\-\/\*]|(\*\*)/)
-
-    return calcAllLog(substr0 + log(eval(substr2[0].replace('(', '')), eval(substr)) + substr1.slice(flag ? substr2[0].length + 1 : substr2[0].length))
+    
   }
   
   return str
@@ -107,7 +119,7 @@ const calc = () => {
   try {
     if (!Number(input.value)) previous = input.value
     inputString = input.value.replace(',', '.')
-    inputString = calcAllLog(calcAllFac(calcAllBracket(inputString)))
+    inputString = calcAllLog(calcAllFac(inputString))
     input.value = inputString && String(eval(inputString)).replace('.', ',')
   } catch(e) {
     console.log('calc error')
@@ -126,16 +138,16 @@ const clean = (str: string, hardMode: boolean): {} => {
     if (strictMode || hardMode) {
       str = str.replace(/(\*[\+\-\.\,\/\!])/g, '*')
       .replace(/(\*{3})/g, '**')
-      .replace(/(\![0-9e])|(\!+)/g, '!')
+      .replace(/(\![0-9])|(\!+)/g, '!')
       .replace(/(\+[\*\-\.\,\/\!])|(\++)/g, '+')
       .replace(/(\-[\+\*\.\,\/\!])|(\-+)/g, '-')
       .replace(/(\/[\+\-\.\,\*\!])|(\/+)/g, '/')
       .replace(/(\,[\+\-\.\*\/\!])|(\,+)/g, ',')
       .replace(/(\.[\+\-\*\,\/\!])|(\.+)/g, '.')
-      .replace(/e[^\+]/g, 'e')
+      .replace(/e[^0-9]/g, 'e')
       .replace(/\([^\-0-9l\(\)]/g, '(')
 
-      if (!['-', 'l', '(', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(str[0])) str = str.slice(1)
+      if (!['-', 'l', '(', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(str[0])) str = str.slice(1)
     }
 
     let obj: Obj = {str, selectionStart, selectionEnd, flag}
