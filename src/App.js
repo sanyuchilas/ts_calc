@@ -74,7 +74,7 @@ const calcAllFac = (str) => {
             return calcAllFac(substr0 + fac(eval(substr)) + substr1);
         }
         else {
-            let substr = str.slice(0, first).split(/[\+\-\*\/\(]|(log)/).pop();
+            let substr = str.slice(0, first).split(/[\+\-\*\/\(_]|(log)/).pop();
             let substr0 = str.slice(0, first - substr.length);
             let substr1 = str.slice(first + 1);
             return calcAllFac(substr0 + fac(eval(substr)) + substr1);
