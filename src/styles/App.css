@@ -10,6 +10,7 @@
 }
 
 body, html {
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Arial, sans-serif;
   background: #eaeaea;
   color: #555;
   font-size: 13px;
@@ -105,8 +106,9 @@ body.notouch li span:hover, li span:active {
 
 /* Calculator */
 
-#result {
+textarea#result {
   font-size: 3.75rem;
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Arial, sans-serif;
   height: 40vh;
   background: #ccc;
   width: 100%;

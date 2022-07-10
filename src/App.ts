@@ -4,7 +4,7 @@ let inputString: string = ''
 let previous: string = ''
 let next: string = ''
 let clickQ: boolean = false
-let strictMode = true
+let strictMode = false
 
 interface Obj {
   readonly str?: string,
@@ -82,7 +82,7 @@ const log = (a: number, b: number): number => {
   return Number((Math.log(a) / Math.log(b)).toFixed(15))
 }
 
-const calcAllFac = (str: string): string => {
+const calcAllFac = (str: any): string => {
   if (str.includes('!')) {
     let first: number = str.indexOf('!')
 
@@ -90,7 +90,7 @@ const calcAllFac = (str: string): string => {
 
       let bracketIndex = findAppropriateBracketIndex(str.slice(0, first))
       let substr0 = str.slice(0, bracketIndex)
-      let substr = str.slice(bracketIndex, first)
+      let substr = calcAllLog(str.slice(bracketIndex, first))
       let substr1 = str.slice(first + 1)
 
       return calcAllFac(substr0 + fac(eval(substr)) + substr1)
@@ -100,16 +100,47 @@ const calcAllFac = (str: string): string => {
       let substr0 = str.slice(0, first - substr.length)
       let substr1 = str.slice(first + 1)
       
-      return calcAllFac(substr0 + fac(+substr) + substr1)
+      return calcAllFac(substr0 + fac(eval(substr)) + substr1)
     }
   }
 
   return str
 }
 
-const calcAllLog = (str: string): string => {
-  if (str.includes('log') && str.includes('_')) {
-    
+const calcAllLog = (str: any): string => {
+  if (str.includes('_')) {
+    let first: number = str.indexOf('_')
+
+    if (str[first + 1] === '(') {
+
+      let bracketIndex = findAppropriateBracketIndex(str.slice(first + 1), first + 1)
+      let substr = str.slice(0, first).split('log').pop()
+      let substr0 = str.slice(0, first - substr.length - 3)
+      let substr1 = str.slice(first + 1, bracketIndex + 1)
+      let substr2 = str.slice(first + 1 + substr1.length)
+      
+      substr1 = calcAllLog(substr1)
+
+      return calcAllLog(substr0 + log(eval(substr1), eval(substr)) + substr2)
+    } else {
+      
+      let flag = '_'
+
+      if (str[first + 1] === 'l') flag = ''
+
+      let re = new RegExp(`[\\+\\-\\*\\/\\)${flag}]`)
+
+      let substr = str.slice(0, first).split('log').pop()
+      let substr0 = str.slice(0, first - substr.length - 3)
+      let substr1 = str.slice(first + 1).split(re).shift()
+      let substr2 = str.slice(first + 1 + substr1.length)
+
+      substr1 = calcAllLog(substr1)
+
+      console.log(substr0, substr, substr1, substr2)
+
+      return calcAllLog(substr0 + log(eval(substr1), eval(substr)) + substr2)
+    }
   }
   
   return str
