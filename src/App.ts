@@ -1,3 +1,5 @@
+import './styles/App.css'
+
 //Vars
 
 let inputString: string = ''
