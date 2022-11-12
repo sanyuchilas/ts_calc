@@ -2,8 +2,7 @@ name: CD
 
 on:
   push:
-    tags:
-      - 'v-*'
+    branches: [ master ]
   pull_request:
     branches: [ master ]
     
@@ -27,5 +26,5 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: public
+          FOLDER: dist
           CLEAN: true
