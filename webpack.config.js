@@ -28,7 +28,8 @@ module.exports = {
     new MiniCssExtractPlugin(),
     new CopyPlugin({
       patterns: [
-        { from:  __dirname + '/src/assets', to: "static", noErrorOnMissing: true }
+        { from:  __dirname + '/src/assets', to: 'static', noErrorOnMissing: true },
+        { from : __dirname + '/CNAME', noErrorOnMissing: true }
       ]
     }),
     new CssMinimizerPlugin()
