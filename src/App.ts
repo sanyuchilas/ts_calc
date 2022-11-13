@@ -84,7 +84,56 @@ const log = (a: number, b: number): number => {
   return Number((Math.log(a) / Math.log(b)).toFixed(15))
 }
 
-const calcAllFac = (str: any): string => {
+const rad = (a: number | string) => +(Math.PI / 180 * +a).toFixed(15)
+
+const sin = (a: number | string): number => +Math.sin(rad(a)).toFixed(15)
+
+const cos = (a: number | string): number => +Math.cos(rad(a)).toFixed(15)
+
+const tg = (a: number | string): number => sin(a) / cos(a)
+
+const ctg = (a: number | string): number => cos(a) / sin(a)
+
+function calcAllTrigonometry(str: string): string {
+  if (!str.includes('tg') && !str.includes('ctg') && !str.includes('cos')
+    && !str.includes('sin')) {
+      return str
+  }
+
+  const calcFunc = (str: string, func: typeof sin): string => {
+    const name = func.name
+
+    if (!str.includes(name)) {
+      return str
+    }
+
+    let first = str.indexOf(name) + name.length
+
+    if (str[first] === '(') {
+      let bracketIndex = findAppropriateBracketIndex(str.slice(first), 
+        first)
+      let substr0 = str.slice(0, first - name.length)
+      let substr = calcAllLog(
+        calcAllFac(calcAllTrigonometry(str.slice(first + 1, bracketIndex)))
+      );
+      let substr1 = str.slice(bracketIndex + 1)
+
+      return calcAllTrigonometry(substr0 + func(eval(substr)) + substr1)
+    } else {
+      let substr = calcAllTrigonometry(
+        str.slice(first).split(/[\+\-\*\/\(_!]/).shift() ?? ''
+      );
+      let substr0 = str.slice(0, first - name.length)
+      let substr1 = str.slice(first + substr.length)
+
+      return calcAllTrigonometry(substr0 + func(eval(substr)) + substr1)
+    }
+  }
+
+  return calcFunc(calcFunc(calcFunc(calcFunc(str, ctg), tg), cos), sin)
+}
+
+function calcAllFac(str: string): string {
   if (str.includes('!')) {
     let first: number = str.indexOf('!')
 
@@ -98,7 +147,7 @@ const calcAllFac = (str: any): string => {
       return calcAllFac(substr0 + fac(eval(substr)) + substr1)
     } else {
       
-      let substr = str.slice(0, first).split(/[\+\-\*\/\(_]|(log)/).pop()
+      let substr = str.slice(0, first).split(/[\+\-\*\/\(_]|(log)/).pop() ?? ''
       let substr0 = str.slice(0, first - substr.length)
       let substr1 = str.slice(first + 1)
       
@@ -109,14 +158,14 @@ const calcAllFac = (str: any): string => {
   return str
 }
 
-const calcAllLog = (str: any): string => {
-  if (str.includes('_')) {
+function calcAllLog(str: string): string {
+  if (str.includes('log')) {
     let first: number = str.indexOf('_')
 
     if (str[first + 1] === '(') {
 
       let bracketIndex = findAppropriateBracketIndex(str.slice(first + 1), first + 1)
-      let substr = str.slice(0, first).split('log').pop()
+      let substr = str.slice(0, first).split('log').pop() ?? ''
       let substr0 = str.slice(0, first - substr.length - 3)
       let substr1 = str.slice(first + 1, bracketIndex + 1)
       let substr2 = str.slice(first + 1 + substr1.length)
@@ -132,9 +181,9 @@ const calcAllLog = (str: any): string => {
 
       let re = new RegExp(`[\\+\\-\\*\\/\\)${flag}]`)
 
-      let substr = str.slice(0, first).split('log').pop()
+      let substr = str.slice(0, first).split('log').pop() ?? ''
       let substr0 = str.slice(0, first - substr.length - 3)
-      let substr1 = str.slice(first + 1).split(re).shift()
+      let substr1 = str.slice(first + 1).split(re).shift() ?? ''
       let substr2 = str.slice(first + 1 + substr1.length)
 
       substr1 = calcAllLog(substr1)
@@ -152,35 +201,42 @@ const calc = () => {
   try {
     if (!Number(input.value)) previous = input.value
     inputString = input.value.replace(',', '.')
-    inputString = calcAllLog(calcAllFac(inputString))
+    inputString = calcAllLog(calcAllFac(calcAllTrigonometry(inputString)))
     input.value = inputString && String(eval(inputString)).replace('.', ',')
   } catch(e) {
     console.log('calc error')
   }
 }
 
-const clean = (str: string, hardMode: boolean): {} => {
+const clean = (str: string, hardMode: boolean): Obj => {
+
   try {
     let flag = str.slice(input.selectionStart - 1, input.selectionEnd)
-    .match(/[^0-9\-\/\*\+()\.\,\!elog\_]/g)
+    .match(/[^0-9\-\/\*\+()\.\,\!elogsIyfincotg%\_]/g)
     let selectionStart: number = input.selectionStart
-    let selectionEnd: number = input.selectionEnd 
+    let selectionEnd: number = input.selectionEnd
+    let prev = ''
 
-    str = str.replace(/[^0-9\-\/\*\+()\.\,\!elog\_]/g, '')
+    while (str !== prev) {
+      prev = str
+      str = str.replace(/[^0-9\-\/\*\+()\.\,\!elogsiIfyncotg%\_]/g, '')
 
-    if (strictMode || hardMode) {
-      str = str.replace(/(\*[\+\-\.\,\/\!])/g, '*')
-      .replace(/(\*{3})/g, '**')
-      .replace(/(\![0-9])|(\!+)/g, '!')
-      .replace(/(\+[\*\-\.\,\/\!])|(\++)/g, '+')
-      .replace(/(\-[\+\*\.\,\/\!])|(\-+)/g, '-')
-      .replace(/(\/[\+\-\.\,\*\!])|(\/+)/g, '/')
-      .replace(/(\,[\+\-\.\*\/\!])|(\,+)/g, ',')
-      .replace(/(\.[\+\-\*\,\/\!])|(\.+)/g, '.')
-      .replace(/e[^0-9]/g, 'e')
-      .replace(/\([^\-0-9l\(\)]/g, '(')
+      if (strictMode || hardMode) {
+        str = str.replace(/(\*[\+\-\.\,\/\!])/g, '*')
+        .replace(/(\*{3})/g, '**')
+        .replace(/(\![0-9])|(\!+)/g, '!')
+        .replace(/(\+[\*\-\.\,\/\!])|(\++)/g, '+')
+        .replace(/(\-[\+\*\.\,\/\!])|(\-+)/g, '-')
+        .replace(/(\/[\+\-\.\,\*\!])|(\/+)/g, '/')
+        .replace(/(\,[\+\-\.\*\/\!])|(\,+)/g, ',')
+        .replace(/(\.[\+\-\*\,\/\!])|(\.+)/g, '.')
+        .replace(/e[^0-9]/g, 'e')
+        .replace(/\([^\-0-9l\(\)]/g, '(')
 
-      if (!['-', 'l', '(', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(str[0])) str = str.slice(1)
+        if (!['c', 's', 't', '-', 'l', '(', '0', '1', '2', 
+          '3', '4', '5', '6', '7', '8', '9']
+          .includes(str[0])) str = str.slice(1)
+      }
     }
 
     let obj: Obj = {str, selectionStart, selectionEnd, flag}
@@ -243,6 +299,7 @@ const onkeydownHandler = (event: KeyboardEvent)  => {
   if (event.key === ' ') {
     event.preventDefault();
     let cleanInput: Obj = clean(input.value, true)
+
     input.value = cleanInput.str
     setCursor(cleanInput.flag, cleanInput.selectionStart, cleanInput.selectionEnd)
   }
@@ -277,15 +334,15 @@ const onkeypressHandler = (event: KeyboardEvent) => {
     if (input.selectionEnd > 0) input.selectionEnd -= 1
   }
 
-  if (['s', 'S', 'ы', 'Ы'].includes(event.key)) {
-    event.preventDefault();
-    input.selectionStart += 5
-  }
+  // if (['s', 'S', 'ы', 'Ы'].includes(event.key)) {
+  //   event.preventDefault();
+  //   input.selectionStart += 5
+  // }
 
-  if (['w', 'W', 'ц', 'Ц'].includes(event.key)) {
-    event.preventDefault();
-    input.selectionEnd > 5 ? input.selectionEnd -= 5 : input.selectionEnd -= input.selectionEnd
-  }
+  // if (['w', 'W', 'ц', 'Ц'].includes(event.key)) {
+  //   event.preventDefault();
+  //   input.selectionEnd > 5 ? input.selectionEnd -= 5 : input.selectionEnd -= input.selectionEnd
+  // }
 
   // console.log(event.key)
 }
