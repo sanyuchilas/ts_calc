@@ -26,6 +26,14 @@ const strictModeInput: any = document.querySelector('#strict_mode_input')
 
 //Functions
 
+function isInt(n: number): boolean{
+  return Number(n) === n && n % 1 === 0;
+}
+
+function isFloat(n: number): boolean{
+  return Number(n) === n && n % 1 !== 0;
+}
+
 const findAppropriateBracketIndex = (substr: string, bracketIndex: number = -1): number => {
   let chars = substr.split('')
   let len = chars.length
@@ -75,9 +83,9 @@ const setCursor = (flag: (string[] | null | undefined), selectionStart: (number 
   }
 }
 
-const fac = (n: number): number => {
-  if (Number.isInteger(n)) return n ? n * (fac(n-1)) : 1
-  return NaN
+const fac = (n: number): bigint => {
+  if (Number.isInteger(n)) return BigInt(n) ? BigInt(n) * (fac(n-1)) : BigInt(1)
+  return BigInt(NaN)
 }
 
 const log = (a: number, b: number): number => {
@@ -202,7 +210,11 @@ const calc = () => {
     if (!Number(input.value)) previous = input.value
     inputString = input.value.replace(',', '.')
     inputString = calcAllLog(calcAllFac(calcAllTrigonometry(inputString)))
-    input.value = inputString && String(eval(inputString)).replace('.', ',')
+    const ans = eval(inputString)
+    input.value = inputString 
+      && String(
+        isInt(ans) ? BigInt(eval(inputString)) : eval(inputString)
+      ).replace('.', ',')
   } catch(e) {
     console.log('calc error')
   }
@@ -369,3 +381,5 @@ strictModeInput.addEventListener('click', strictModeInputHandler)
 //Code
 
 correct()
+
+// 2.6525285981219103e+32/(1307674368000*1307674368000)
