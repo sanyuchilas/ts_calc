@@ -118,6 +118,15 @@ textarea#result {
   padding: 0 .3rem;
   color: #555 !important;
   resize: none;
+  transition: background .2s;
+}
+
+.error {
+  background: rgb(255, 50, 50, 0.2) !important;
+}
+
+.good {
+  background: rgb(50, 255, 50, 0.2) !important;
 }
 
 #btns {

@@ -12,7 +12,7 @@ interface Obj {
   readonly str?: string,
   readonly selectionStart?: number,
   readonly selectionEnd?: number,
-  readonly flag?: (null | string[])
+  readonly flag?: (null | boolean)
 }
 
 
@@ -28,6 +28,31 @@ const strictModeInput: any = document.querySelector('#strict_mode_input')
 
 function isInt(n: number): boolean{
   return Number.isInteger(n);
+}
+
+function setPreviousValue() {
+  if (input.value !== previous ) {
+    next = input.value
+    input.value = previous
+  }
+}
+
+function showMistakes() {
+  input.focus()
+  if (clickQ) {
+    input.setSelectionRange(input.value.length, input.value.length)
+    clickQ = false
+  } else {
+    if (showInputErrors())
+      clickQ = true
+  }
+}
+
+function setNextValue() {
+  if (input.value !== next) {
+    previous = input.value
+    input.value = next
+  }
 }
 
 function toBig(n: number): number | bigint {
@@ -51,11 +76,11 @@ const findAppropriateBracketIndex = (substr: string, bracketIndex: number = -1):
         stack.push(close)
         continue
       }
-  
+      
       if (open === chars[i] && stack.pop() !== close) {
         return -1
       }
-  
+      
       if (stack.length === 0) return i
     }
   } else if (substr[0] === open) {
@@ -80,7 +105,7 @@ const correct = () => {
   if (!('ontouchstart' in window)) document.body.classList.add('notouch')
 }
 
-const setCursor = (flag: (string[] | null | undefined), selectionStart: (number | undefined), selectionEnd: (number | undefined)): void => {
+const setCursor = (flag: (boolean | null | undefined), selectionStart: (number | undefined), selectionEnd: (number | undefined)): void => {
   if (flag && selectionEnd && selectionStart) {
     input.selectionEnd = selectionEnd - 1
     input.selectionStart = selectionStart - 1
@@ -200,7 +225,7 @@ function calcAllLog(str: string): string {
 
       substr1 = calcAllLog(substr1)
 
-      console.log(substr0, substr, substr1, substr2)
+      // console.log(substr0, substr, substr1, substr2)
 
       return calcAllLog(substr0 + log(eval(substr1), eval(substr)) + substr2)
     }
@@ -219,16 +244,25 @@ const calc = () => {
       && String(
         toBig(ans)
       ).replace('.', ',')
+
+      if (inputString.length) {
+        input.classList.add('good')
+        calcBtn.classList.add('good')
+        cleanBtn.classList.add('good')
+      }
   } catch(e) {
-    console.log('calc error')
+    showMistakes()
+    input.classList.add('error')
+    calcBtn.classList.add('error')
+    cleanBtn.classList.add('error')
   }
 }
 
 const clean = (str: string, hardMode: boolean): Obj => {
 
   try {
-    let flag = str.slice(input.selectionStart - 1, input.selectionEnd)
-    .match(/[^0-9\-\/\*\+()\.\,\!elogsIyfincotg%\_]/g)
+    let flag = !!str.slice(input.selectionStart - 1, input.selectionEnd)
+    .match(/[^0-9\-\/\*\+()\.\,\!elogsIyfincotg%\_]/g)?.length
     let selectionStart: number = input.selectionStart
     let selectionEnd: number = input.selectionEnd
     let prev = ''
@@ -259,12 +293,26 @@ const clean = (str: string, hardMode: boolean): Obj => {
 
     return obj
   } catch(e) {
-    console.log('filter error')
+    // console.log('filter error')
     return {str}
   }
 }
-const showInputErrors = () => {
-  input.setSelectionRange(2, 5)
+function showInputErrors() {
+  const s = input.value
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '(') {
+      if (findAppropriateBracketIndex(s.slice(i), i) === -1) {
+        input.setSelectionRange(i, i + 1)
+        return true
+      }
+    } else if (s[i] === ')') {
+      if (findAppropriateBracketIndex(s.slice(0, i + 1)) === -1) {
+        input.setSelectionRange(i, i + 1)
+        return true
+      }
+    }
+  }
+  return false
 }
 
 
@@ -276,6 +324,12 @@ const cleanBtnHandler = (event: any) => {
 }
 
 const inputHandler = (event: any) => {
+  input.classList.remove('error')
+  input.classList.remove('good')
+  cleanBtn.classList.remove('error')
+  cleanBtn.classList.remove('good')
+  calcBtn.classList.remove('error')
+  calcBtn.classList.remove('good')
   let value: any = event.target.value
   
   let cleanInput: Obj = clean(value, false)
@@ -297,19 +351,13 @@ const onkeydownHandler = (event: KeyboardEvent)  => {
 
   if (event.ctrlKey && ['z', 'Z', 'я', 'Я'].includes(event.key)) {
     event.preventDefault();
-    if (input.value !== previous ) {
-      next = input.value
-      input.value = previous
-    }
+    setPreviousValue()
   }
 
   if ((event.ctrlKey && event.shiftKey && ['z', 'Z', 'я', 'Я'].includes(event.key)
       || event.ctrlKey && ['y', 'Y', 'н', 'Н'].includes(event.key))) {
     event.preventDefault();
-    if (input.value !== next) {
-      previous = input.value
-      input.value = next
-    }
+    setNextValue()
   }
 
   if (event.key === ' ') {
@@ -328,17 +376,16 @@ const onkeydownHandler = (event: KeyboardEvent)  => {
   // console.log(event.key)
 }
 
-const onkeypressHandler = (event: KeyboardEvent) => {
+function onQDownHandler(event: KeyboardEvent) {
   if (['q', 'Q', 'й', 'Й'].includes(event.key)) {
     event.preventDefault();
-    if (clickQ) {
-      input.setSelectionRange(input.value.length, input.value.length)
-      clickQ = false
-    } else {
-      showInputErrors()
-      clickQ = true
-    }
+    showMistakes()
+  } else {
+    clickQ = false
   }
+}
+
+const onkeypressHandler = (event: KeyboardEvent) => {
 
   if (['d', 'D', 'в', 'В'].includes(event.key)) {
     event.preventDefault();
@@ -374,16 +421,22 @@ const strictModeInputHandler = (event: any) => {
 
 //Listeners
 
+const setPreviousValueEl = document.querySelector('#set_previous_value')
+const setNextValueEl = document.querySelector('#set_next_value')
+const showMistakesEl = document.querySelector('#show_mistakes')
+
 cleanBtn.addEventListener('click', cleanBtnHandler)
 calcBtn.addEventListener('click', calcBtnHandler)
 input.addEventListener('input', inputHandler)
 document.body.onkeydown = onkeydownHandler
 input.onkeypress = onkeypressHandler
+input.onkeydown = onQDownHandler
 strictModeInput.addEventListener('click', strictModeInputHandler)
+setPreviousValueEl?.addEventListener('click', setPreviousValue)
+setNextValueEl?.addEventListener('click', setNextValue)
+showMistakesEl?.addEventListener('click', showMistakes)
 
 
 //Code
 
 correct()
-
-// 2.6525285981219103e+32/(1307674368000*1307674368000)
