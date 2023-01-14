@@ -103,13 +103,16 @@ body.notouch li span:hover, li span:active {
   text-decoration: underline;
 }
 
+body.notouch textarea#result {
+  height: 40vh;
+}
 
 /* Calculator */
 
 textarea#result {
   font-size: 3.75rem;
+  height: 200px;
   font-family: Calibri, Candara, Segoe, "Segoe UI", Arial, sans-serif;
-  height: 40vh;
   background: #ccc;
   width: 100%;
   align-self: center;
