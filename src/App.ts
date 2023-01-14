@@ -27,11 +27,15 @@ const strictModeInput: any = document.querySelector('#strict_mode_input')
 //Functions
 
 function isInt(n: number): boolean{
-  return Number(n) === n && n % 1 === 0;
+  return Number.isInteger(n);
 }
 
-function isFloat(n: number): boolean{
-  return Number(n) === n && n % 1 !== 0;
+function toBig(n: number): number | bigint {
+  if (isInt(n) && n > Number.MAX_SAFE_INTEGER) {
+    return BigInt(n)
+  }
+
+  return +n.toFixed(15)
 }
 
 const findAppropriateBracketIndex = (substr: string, bracketIndex: number = -1): number => {
@@ -89,14 +93,14 @@ const fac = (n: number): bigint => {
 }
 
 const log = (a: number, b: number): number => {
-  return Number((Math.log(a) / Math.log(b)).toFixed(15))
+  return Number((Math.log(a) / Math.log(b)).toFixed(10))
 }
 
-const rad = (a: number | string) => +(Math.PI / 180 * +a).toFixed(15)
+const rad = (a: number | string) => +(Math.PI / 180 * +a).toFixed(10)
 
-const sin = (a: number | string): number => +Math.sin(rad(a)).toFixed(15)
+const sin = (a: number | string): number => +Math.sin(rad(a)).toFixed(10)
 
-const cos = (a: number | string): number => +Math.cos(rad(a)).toFixed(15)
+const cos = (a: number | string): number => +Math.cos(rad(a)).toFixed(10)
 
 const tg = (a: number | string): number => sin(a) / cos(a)
 
@@ -208,12 +212,12 @@ function calcAllLog(str: string): string {
 const calc = () => {
   try {
     if (!Number(input.value)) previous = input.value
-    inputString = input.value.replace(',', '.')
+    inputString = input.value.replace(/,/g, '.')
     inputString = calcAllLog(calcAllFac(calcAllTrigonometry(inputString)))
     const ans = eval(inputString)
     input.value = inputString 
       && String(
-        isInt(ans) ? BigInt(eval(inputString)) : eval(inputString)
+        toBig(ans)
       ).replace('.', ',')
   } catch(e) {
     console.log('calc error')
